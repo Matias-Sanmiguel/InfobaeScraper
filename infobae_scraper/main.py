@@ -1,10 +1,17 @@
 import argparse
 import sys
+from urllib.parse import urlparse
 
 from salida.escritor_csv import EscritorCSV
 from scraper.crawleador_seccion import obtener_urls_seccion
 from scraper.driver import crear_driver
 from scraper.parseador_articulo import parsear_articulo
+
+
+def _validar_url_infobae(url: str):
+    dominio = urlparse(url).netloc
+    if dominio not in ("www.infobae.com", "infobae.com"):
+        raise ValueError(f"URL no pertenece a Infobae: {dominio}")
 
 
 def procesar_url(url: str, escritor: EscritorCSV, delay: float):
@@ -14,6 +21,7 @@ def procesar_url(url: str, escritor: EscritorCSV, delay: float):
 
 
 def modo_url(url: str, directorio_salida: str, delay: float):
+    _validar_url_infobae(url)
     escritor = EscritorCSV(directorio_salida)
     procesar_url(url, escritor, delay)
 

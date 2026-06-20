@@ -23,7 +23,12 @@ CABECERAS = {
 
 def extraer_seccion(url: str) -> str:
     segmentos = urlparse(url).path.strip("/").split("/")
-    return "/".join(segmentos[:2]) if len(segmentos) >= 2 else segmentos[0]
+    resultado = []
+    for seg in segmentos:
+        if re.fullmatch(r'\d{4}', seg):
+            break
+        resultado.append(seg)
+    return "/".join(resultado[:2]) if len(resultado) >= 2 else resultado[0] if resultado else ""
 
 
 def extraer_meta(soup: BeautifulSoup, propiedad: str) -> str:

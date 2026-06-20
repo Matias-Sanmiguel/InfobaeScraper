@@ -45,7 +45,7 @@ def test_extraer_seccion_dos_segmentos():
 
 def test_extraer_seccion_un_segmento():
     url = "https://www.infobae.com/economia/2026/06/20/nota/"
-    assert extraer_seccion(url) == "economia/2026"
+    assert extraer_seccion(url) == "economia"
 
 
 def test_extraer_meta_og_title():
