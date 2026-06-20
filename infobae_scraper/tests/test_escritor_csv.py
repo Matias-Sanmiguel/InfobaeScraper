@@ -52,8 +52,10 @@ def test_noticias_csv_contiene_datos(tmp_path):
 def test_medios_csv_contiene_infobae(tmp_path):
     escritor = EscritorCSV(str(tmp_path))
     escritor.guardar(_resultado_muestra())
+    escritor.guardar(_resultado_muestra())
     filas = list(csv.DictReader(open(tmp_path / "medios.csv", encoding="utf-8")))
     assert any(f["nombre"] == "Infobae" for f in filas)
+    assert len(filas) == 1
 
 
 def test_rel_publica_vincula_medio_a_noticia(tmp_path):
@@ -92,3 +94,19 @@ def test_guardar_dos_veces_appenda_filas(tmp_path):
     escritor.guardar(resultado2)
     filas = list(csv.DictReader(open(tmp_path / "noticias.csv", encoding="utf-8")))
     assert len(filas) == 2
+
+
+def test_autores_y_temas_sin_duplicados(tmp_path):
+    escritor = EscritorCSV(str(tmp_path))
+    escritor.guardar(_resultado_muestra())
+    resultado2 = _resultado_muestra()
+    resultado2.noticia.noticia_id = "def456"
+    escritor.guardar(resultado2)
+    autores = list(csv.DictReader(open(tmp_path / "autores.csv", encoding="utf-8")))
+    temas = list(csv.DictReader(open(tmp_path / "temas.csv", encoding="utf-8")))
+    rel_escrito = list(csv.DictReader(open(tmp_path / "rel_escrito_por.csv", encoding="utf-8")))
+    rel_menciona = list(csv.DictReader(open(tmp_path / "rel_menciona.csv", encoding="utf-8")))
+    assert len(autores) == 1
+    assert len(temas) == 1
+    assert len(rel_escrito) == 2
+    assert len(rel_menciona) == 2
