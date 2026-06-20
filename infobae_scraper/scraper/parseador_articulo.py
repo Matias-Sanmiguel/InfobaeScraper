@@ -1,3 +1,4 @@
+import json
 import re
 import time
 from urllib.parse import urlparse
@@ -52,24 +53,56 @@ def extraer_cuerpo(soup: BeautifulSoup) -> str:
     return contenedor.get_text(separator=" ").strip()
 
 
+def _autores_desde_ldjson(soup: BeautifulSoup) -> list[str]:
+    for script in soup.find_all("script", type="application/ld+json"):
+        try:
+            datos = json.loads(script.string or "")
+        except (json.JSONDecodeError, TypeError):
+            continue
+        if not isinstance(datos, dict) or datos.get("@type") != "NewsArticle":
+            continue
+        autor = datos.get("author")
+        if not autor:
+            continue
+        if isinstance(autor, dict):
+            autor = [autor]
+        return [
+            a["name"]
+            for a in autor
+            if isinstance(a, dict) and a.get("@type") == "Person" and a.get("name")
+        ]
+    return []
+
+
 def extraer_autores(soup: BeautifulSoup) -> list[str]:
+    desde_ldjson = _autores_desde_ldjson(soup)
+    if desde_ldjson:
+        return desde_ldjson
     etiquetas = soup.find_all("a", class_="author-name") or soup.find_all(
         "span", class_="author-name"
     )
     if etiquetas:
         return [e.get_text(strip=True) for e in etiquetas if e.get_text(strip=True)]
-    meta = extraer_meta(soup, "article:author")
-    return [meta] if meta else []
+    return []
+
+
+LONGITUD_MAXIMA_TEMA = 40
+
+
+def _es_tema_valido(nombre: str) -> bool:
+    letras = [c for c in nombre if c.isalpha()]
+    return bool(letras) and len(nombre) <= LONGITUD_MAXIMA_TEMA and not all(c.isupper() for c in letras)
 
 
 def extraer_temas(soup: BeautifulSoup) -> list[str]:
-    etiquetas = soup.find_all("a", class_="tag") or soup.find_all(
-        "a", attrs={"data-type": "tag"}
-    )
+    tags_meta = soup.find_all("meta", property="article:tag")
+    if tags_meta:
+        return [m.get("content", "").strip() for m in tags_meta if _es_tema_valido(m.get("content", "").strip())]
+    etiquetas = soup.find_all("a", class_="tag") or soup.find_all("a", attrs={"data-type": "tag"})
     if etiquetas:
-        return [e.get_text(strip=True) for e in etiquetas if e.get_text(strip=True)]
+        return [e.get_text(strip=True) for e in etiquetas if _es_tema_valido(e.get_text(strip=True))]
     meta = extraer_meta(soup, "keywords")
-    return [k.strip() for k in meta.split(",") if k.strip()] if meta else []
+    return [k.strip() for k in meta.split(",") if _es_tema_valido(k.strip())] if meta else []
 
 
 def clasificar_oracion(oracion: str) -> tuple[str, str]:
