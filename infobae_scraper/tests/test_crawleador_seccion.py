@@ -15,7 +15,7 @@ def test_filtra_urls_que_no_son_articulos():
         _hacer_enlace("https://www.infobae.com/suscripciones/"),
         _hacer_enlace("https://www.infobae.com/america/mundo/2026/06/19/nota-dos/"),
     ]
-    driver.execute_script.side_effect = [500, 500]
+    driver.execute_script.side_effect = [500, None, 500]
 
     urls = obtener_urls_seccion(driver, "/america/mundo/", max_articulos=10, delay_scroll=0)
 
@@ -31,7 +31,7 @@ def test_respeta_maximo_de_articulos():
     ]
     driver = MagicMock()
     driver.find_elements.return_value = [_hacer_enlace(u) for u in urls_validas]
-    driver.execute_script.side_effect = [500, 500]
+    driver.execute_script.side_effect = [500, None, 500]
 
     urls = obtener_urls_seccion(driver, "/america/mundo/", max_articulos=5, delay_scroll=0)
 
@@ -43,17 +43,17 @@ def test_para_cuando_altura_no_cambia():
     driver.find_elements.return_value = [
         _hacer_enlace("https://www.infobae.com/america/mundo/2026/06/20/nota-a/"),
     ]
-    driver.execute_script.side_effect = [300, 300]
+    driver.execute_script.side_effect = [300, None, 300]
 
     urls = obtener_urls_seccion(driver, "/america/mundo/", max_articulos=100, delay_scroll=0)
 
-    assert driver.execute_script.call_count == 2
+    assert driver.execute_script.call_count == 3
 
 
 def test_construye_url_con_barra_inicial():
     driver = MagicMock()
     driver.find_elements.return_value = []
-    driver.execute_script.side_effect = [0, 0]
+    driver.execute_script.side_effect = [0, None, 0]
 
     obtener_urls_seccion(driver, "/america/mundo/", max_articulos=1, delay_scroll=0)
 

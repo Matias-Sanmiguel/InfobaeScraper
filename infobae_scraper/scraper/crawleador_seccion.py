@@ -18,7 +18,7 @@ def obtener_urls_seccion(
 ) -> list[str]:
     url_seccion = f"{URL_BASE}{seccion}" if seccion.startswith("/") else f"{URL_BASE}/{seccion}"
     driver.get(url_seccion)
-    time.sleep(3)
+    time.sleep(delay_scroll)
 
     urls_encontradas: set[str] = set()
 
@@ -33,10 +33,9 @@ def obtener_urls_seccion(
             break
 
         altura_anterior = driver.execute_script("return document.body.scrollHeight")
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
         time.sleep(delay_scroll)
-        altura_nueva = driver.execute_script(
-            "window.scrollTo(0, document.body.scrollHeight); return document.body.scrollHeight"
-        )
+        altura_nueva = driver.execute_script("return document.body.scrollHeight")
 
         if altura_nueva == altura_anterior:
             break
