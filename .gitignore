@@ -1,10 +1,19 @@
+# Herramientas de desarrollo
 .superpowers/
-infobae_scraper/venv/
-infobae_scraper/__pycache__/
-infobae_scraper/**/__pycache__/
-infobae_scraper/.pytest_cache/
-infobae_scraper/salida*/
-infobae_scraper/*.csv
-infobae_scraper/*.jsonl
+docs/superpowers/
+
+# Python
+__pycache__/
 *.pyc
+*.pyo
 .env
+
+# Entorno virtual
+infobae_scraper/venv/
+infobae_scraper/.pytest_cache/
+
+# Salida del scraper
+infobae_scraper/salida/
+infobae_scraper/salida_*/
+infobae_scraper/**/*.csv
+infobae_scraper/**/*.jsonl
