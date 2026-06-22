@@ -3,7 +3,8 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
-salida*/
+salida/
+salida_*/
 *.csv
 *.jsonl
 .env
