@@ -47,7 +47,7 @@ def main():
     grupo.add_argument("--url", type=str, help="URL de un artículo individual")
     grupo.add_argument("--seccion", type=str, help="Sección a crawlear (ej: /america/mundo/)")
     parser.add_argument("--max", type=int, default=50, help="Máximo de artículos en modo sección")
-    parser.add_argument("--salida", type=str, default="salida", help="Directorio de salida para CSVs")
+    parser.add_argument("--salida", type=str, default="datos", help="Directorio de salida para CSVs")
     parser.add_argument("--delay", type=float, default=2.0, help="Delay entre requests en segundos")
     args = parser.parse_args()
 

@@ -13,7 +13,7 @@ infobae_scraper/venv/
 infobae_scraper/.pytest_cache/
 
 # Salida del scraper
-infobae_scraper/salida/
-infobae_scraper/salida_*/
+infobae_scraper/datos/
+infobae_scraper/datos_*/
 infobae_scraper/**/*.csv
 infobae_scraper/**/*.jsonl
